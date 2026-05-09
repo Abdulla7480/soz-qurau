@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Қазақша сөйлем құрау</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="app-initializing">
+    <aside id="initPanel" class="init-panel" aria-hidden="false">
+        <div id="initPhotoLayer" class="photo-layer" aria-hidden="true"></div>
+        <div class="init-card">
+            <p class="eyebrow">Қош келдің</p>
+            <h1>Сөз құрау ойыны</h1>
+            <p class="init-copy">Сөйлемдерді құрап, ұпай жинайық.</p>
+            <button id="initStartBtn" class="primary-btn init-btn" type="button">Бастау</button>
+        </div>
+    </aside>
+
+    <div class="app">
+        <div class="screen-shell">
+            <header class="top-panel">
+                <button id="topBackBtn" class="top-icon-btn hidden" type="button" aria-label="Артқа">←</button>
+                <div id="timerBadge" class="top-badge hidden">02:00</div>
+                <div class="top-right-actions">
+                    <button id="topRatingBtn" class="top-icon-btn" type="button" aria-label="Үздік тізім">🏆</button>
+                    <button id="headerSoundBtn" class="top-icon-btn" type="button" aria-label="Дыбыс">🔊</button>
+                    <button id="settingsBtn" class="top-icon-btn" type="button" aria-label="Баптаулар">⚙</button>
+                </div>
+            </header>
+
+            <main class="content-area">
+                <section id="menuView" class="view active">
+                    <div id="menuPhotoLayer" class="photo-layer menu-photo-layer" aria-hidden="true"></div>
+                    <section class="headline-block">
+                        <p class="eyebrow">Балаларға арналған ойын</p>
+                        <h1>Қазақша сөйлем құрау</h1>
+                    </section>
+
+                    <section class="topics-wrapper">
+                        <div id="topicsTrack" class="topics-track"></div>
+                    </section>
+                </section>
+
+                <section id="gameView" class="view">
+                    <section id="taskScenePanel" class="task-scene-panel hidden" aria-live="polite">
+                        <div class="task-scene-frame">
+                            <div class="task-scene-status">
+                                <div class="scene-status-group">
+                                    <span id="gameCategoryTitle" class="scene-status-pill">Отбасы</span>
+                                    <span id="taskCounter" class="scene-status-pill">1 / 5</span>
+                                </div>
+                                <span id="sceneTimerBadge" class="scene-status-pill">02:00</span>
+                            </div>
+                            <img id="taskSceneImage" class="task-scene-image" src="" alt="">
+                        </div>
+                    </section>
+
+                    <section class="sentence-card">
+                        <div class="sentence-top">
+                            <div>
+                                <p class="eyebrow">Тапсырма</p>
+                                <h2 id="taskTitle">Сөздерді дұрыс ретке қой</h2>
+                            </div>
+                            <div class="sentence-top-actions">
+                                <button id="helpBtn" class="small-btn" type="button">Көмек</button>
+                                <button id="backToMenuBtn" class="small-btn" type="button">Мәзір</button>
+                            </div>
+                        </div>
+
+                        <div class="sentence-zone">
+                            <div class="zone-title">Аралас сөздер</div>
+                            <div id="wordBank" class="word-bank"></div>
+                        </div>
+
+                        <div class="sentence-zone answer-wrap">
+                            <div class="zone-title">Жауап жолы</div>
+                            <div id="answerBank" class="word-bank answer-bank"></div>
+                        </div>
+
+                        <div class="game-actions">
+                            <button id="resetBtn" class="secondary-btn" type="button">Қайта қою</button>
+                            <button id="checkBtn" class="primary-btn" type="button">Тексеру</button>
+                        </div>
+
+                        <p id="feedbackText" class="feedback-text">Сөздерді дұрыс ретпен орналастыр.</p>
+                    </section>
+                </section>
+
+                <div class="floating-actions"></div>
+            </main>
+        </div>
+
+        <aside id="welcomePanel" class="overlay-panel" aria-hidden="false">
+            <div class="overlay-backdrop solid-backdrop"></div>
+            <div class="overlay-card">
+                <div class="overlay-head">
+                    <div>
+                        <p class="eyebrow">Қош келдің</p>
+                        <h2>Атыңды жаз</h2>
+                    </div>
+                </div>
+
+                <div class="settings-list">
+                    <label class="input-row">
+                        <span>Ойыншы аты</span>
+                        <input id="playerNameInput" class="name-input" type="text" maxlength="24" placeholder="Атыңды жаз" autocomplete="name" autocapitalize="words">
+                    </label>
+                    <div class="game-actions single-column">
+                        <button id="enterGameBtn" class="primary-btn wide-btn" type="button">Ойынға кіру</button>
+                        <button id="guestGameBtn" class="secondary-btn wide-btn" type="button">Қонақ</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <aside id="settingsPanel" class="overlay-panel hidden" aria-hidden="true">
+            <div class="overlay-backdrop"></div>
+            <div class="overlay-card">
+                <div class="overlay-head">
+                    <div>
+                        <p class="eyebrow">Баптаулар</p>
+                        <h2>Ойын параметрлері</h2>
+                    </div>
+                    <button id="closeSettingsBtn" class="icon-close" type="button" aria-label="Жабу">✕</button>
+                </div>
+
+                <div class="settings-list">
+                    <label class="setting-row">
+                        <span class="setting-text">
+                            <strong>Дыбыс</strong>
+                            <small>Ойын дыбысын қосу немесе өшіру</small>
+                        </span>
+                        <input id="soundToggle" class="toggle-input" type="checkbox">
+                    </label>
+
+                    <label class="setting-row">
+                        <span class="setting-text">
+                            <strong>Түнгі режим</strong>
+                            <small>Ай мен жұлдыз стиліндегі қараңғы көрініс</small>
+                        </span>
+                        <input id="darkModeToggle" class="toggle-input" type="checkbox">
+                    </label>
+
+                    <button id="clearRatingBtn" class="danger-btn wide-btn" type="button">Үздік тізімді өшіру</button>
+                </div>
+            </div>
+        </aside>
+
+        <aside id="ratingPanel" class="overlay-panel hidden" aria-hidden="true">
+            <div class="overlay-backdrop"></div>
+            <div class="overlay-card info-card">
+                <div class="overlay-head">
+                    <div>
+                        <p class="eyebrow">Үздік тізім</p>
+                        <h2>Үздік ойыншылар</h2>
+                    </div>
+                    <button id="closeRatingBtn" class="icon-close" type="button" aria-label="Жабу">✕</button>
+                </div>
+
+                <div id="ratingList" class="rating-list"></div>
+            </div>
+        </aside>
+
+        <aside id="resultPanel" class="overlay-panel hidden" aria-hidden="true">
+            <div class="overlay-backdrop solid-backdrop"></div>
+            <div class="overlay-card info-card">
+                <div class="overlay-head">
+                    <div>
+                        <p class="eyebrow">Нәтиже</p>
+                        <h2>Бөлім аяқталды</h2>
+                    </div>
+                </div>
+
+                <div class="info-copy">
+                    <p id="resultSummary">Нәтиже дайын.</p>
+                </div>
+
+                <button id="resultCloseBtn" class="primary-btn wide-btn" type="button">Жалғастыру</button>
+            </div>
+        </aside>
+
+        <aside id="helpPanel" class="overlay-panel hidden" aria-hidden="true">
+            <div class="overlay-backdrop"></div>
+            <div class="overlay-card info-card">
+                <div class="overlay-head">
+                    <div>
+                        <p class="eyebrow">Көмек</p>
+                        <h2>Нұсқау</h2>
+                    </div>
+                    <button id="closeHelpBtn" class="icon-close" type="button" aria-label="Жабу">✕</button>
+                </div>
+
+                <div class="info-copy">
+                    <p id="helpText">Көмек мәтіні осында шығады.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="music/background.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=calm-background-ambient-11157.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
