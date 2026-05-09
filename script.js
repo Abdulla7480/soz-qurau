@@ -353,6 +353,9 @@ const resultSummary = document.getElementById("resultSummary");
 const timerBadge = document.getElementById("timerBadge");
 const sentenceCard = document.querySelector(".sentence-card");
 const helpText = document.getElementById("helpText");
+let musicRestartTimer = null;
+let musicFadeFrame = null;
+let isMusicFadingOut = false;
 
 function shuffleArray(items) {
     const copy = [...items];
@@ -497,6 +500,90 @@ function loadPreferences() {
     applyPreferences();
 }
 
+function getMusicTargetVolume() {
+    return gameView.classList.contains("active") ? 0.12 : 0.22;
+}
+
+function clearMusicLoopTimers() {
+    clearTimeout(musicRestartTimer);
+    musicRestartTimer = null;
+    if (musicFadeFrame) {
+        cancelAnimationFrame(musicFadeFrame);
+        musicFadeFrame = null;
+    }
+    isMusicFadingOut = false;
+}
+
+function playBackgroundMusic() {
+    if (!bgMusic || !state.soundOn) {
+        return;
+    }
+    clearMusicLoopTimers();
+    bgMusic.volume = getMusicTargetVolume();
+    bgMusic.play().catch(() => {});
+}
+
+function setupBackgroundMusicLoop() {
+    if (!bgMusic) {
+        return;
+    }
+
+    bgMusic.loop = false;
+
+    bgMusic.addEventListener("timeupdate", () => {
+        if (!state.soundOn || bgMusic.paused || isMusicFadingOut || !Number.isFinite(bgMusic.duration) || bgMusic.duration <= 0) {
+            return;
+        }
+
+        const timeLeft = bgMusic.duration - bgMusic.currentTime;
+        if (timeLeft > 1) {
+            return;
+        }
+
+        isMusicFadingOut = true;
+        const startVolume = bgMusic.volume;
+        const fadeStart = performance.now();
+        const fadeDuration = 1000;
+
+        const animateFade = (now) => {
+            if (!state.soundOn || bgMusic.paused) {
+                isMusicFadingOut = false;
+                musicFadeFrame = null;
+                return;
+            }
+
+            const progress = Math.min(1, (now - fadeStart) / fadeDuration);
+            const nextVolume = startVolume * (1 - progress);
+            bgMusic.volume = Math.max(0.01, nextVolume);
+
+            if (progress < 1) {
+                musicFadeFrame = requestAnimationFrame(animateFade);
+            } else {
+                musicFadeFrame = null;
+            }
+        };
+
+        musicFadeFrame = requestAnimationFrame(animateFade);
+    });
+
+    bgMusic.addEventListener("ended", () => {
+        if (!state.soundOn) {
+            clearMusicLoopTimers();
+            return;
+        }
+
+        clearMusicLoopTimers();
+        musicRestartTimer = setTimeout(() => {
+            if (!state.soundOn) {
+                return;
+            }
+            bgMusic.currentTime = 0;
+            bgMusic.volume = getMusicTargetVolume();
+            bgMusic.play().catch(() => {});
+        }, 2000);
+    });
+}
+
 function applyPreferences() {
     document.body.classList.toggle("dark-mode", state.darkMode);
     soundBtn.textContent = state.soundOn ? "🔊" : "🔇";
@@ -505,9 +592,10 @@ function applyPreferences() {
     }
     if (state.soundOn) {
         if (!bgMusic.paused) {
-            bgMusic.volume = gameView.classList.contains("active") ? 0.12 : 0.22;
+            bgMusic.volume = getMusicTargetVolume();
         }
     } else {
+        clearMusicLoopTimers();
         bgMusic.pause();
     }
 }
@@ -604,9 +692,9 @@ function showView(view) {
         return;
     }
     if (state.soundOn) {
-        bgMusic.volume = view === "game" ? 0.12 : 0.22;
+        bgMusic.volume = getMusicTargetVolume();
         if (bgMusic.paused) {
-            bgMusic.play().catch(() => {});
+            playBackgroundMusic();
         }
     }
 }
@@ -1036,7 +1124,7 @@ soundBtn.addEventListener("click", () => {
     soundToggle.checked = state.soundOn;
     applyPreferences();
     if (state.soundOn && bgMusic) {
-        bgMusic.play().catch(() => {});
+        playBackgroundMusic();
     }
     savePreferences();
 });
@@ -1048,7 +1136,7 @@ soundToggle.addEventListener("change", () => {
     if (state.soundOn) {
         playButtonSound();
         if (bgMusic) {
-            bgMusic.play().catch(() => {});
+            playBackgroundMusic();
         }
     }
 });
@@ -1095,12 +1183,12 @@ function initializeApp() {
     renderLeaderboard();
     closePanel(welcomePanel);
     if (state.soundOn && bgMusic) {
-        bgMusic.volume = 0.22;
-        bgMusic.play().catch(() => {});
+        playBackgroundMusic();
     }
 }
 
 setupRandomPhotoBackgrounds();
+setupBackgroundMusicLoop();
 
 initStartBtn.addEventListener("click", () => {
     playButtonSound();
